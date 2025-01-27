@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .main{
+            display: grid;
+            grid-template-columns: 7cm 17cm 15.1cm;
+            grid-template-rows: 2cm 14.5cm 1.6cm;
+            /* column-gap: 20px;
+            row-gap: 20px; */
+            gap: 20px;
+        }
+        .d1{
+            background-color: red;
+            color: white;
+            align-content: center;
+            grid-column-start: 1;
+            grid-column-end: 4;
+            text-align: center;
+        }
+        .d2{
+            background-color: rgb(120, 125, 195);
+            color: white;
+            /* align-content: center;
+            grid-column-start: 1;
+            grid-column-end: 3; */
+        }
+        .d3{
+            background-color: rgb(73, 74, 86);
+            color: white;
+            /* align-content: center;
+            grid-column-start: 1;
+            grid-column-end: 3; */
+        }
+        .d4{
+            background-color: rgb(16, 20, 75);
+            color: white;
+            /* align-content: center;
+            grid-column-start: 1;
+            grid-column-end: 3; */
+        }
+        .d5{
+            background-color: rgb(102, 233, 124);
+            color: white;
+            align-content: center;
+            grid-column-start: 1;
+            grid-column-end: 4;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="d1">Header</div>
+        <div class="d2">Dashboard</div>
+        <div class="d3">Main content</div>
+        <div class="d4">Sidebar</div>
+        <div class="d5">Footer</div>
+    </div>
+</body>
+</html>
