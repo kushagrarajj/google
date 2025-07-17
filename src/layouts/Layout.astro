@@ -1,0 +1,222 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Digital Alchemist Portfolio - Interactive 3D Experience" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    
+    <!-- Preload fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Meta tags for SEO -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Your Name",
+        "jobTitle": "Creative Developer",
+        "description": "Digital Alchemist transforming ideas into interactive experiences",
+        "url": "https://yourportfolio.com",
+        "sameAs": [
+          "https://github.com/yourusername",
+          "https://linkedin.com/in/yourusername",
+          "https://twitter.com/yourusername"
+        ]
+      }
+    </script>
+  </head>
+  <body class="bg-space-blue text-warm-white overflow-x-hidden">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-space-blue z-50 flex items-center justify-center">
+      <div class="text-center">
+        <div class="text-6xl font-mono text-electric-cyan mb-4 animate-pulse-glow">
+          DA
+        </div>
+        <div class="text-xl font-mono text-warm-white/70">
+          Initializing Laboratory...
+        </div>
+        <div class="mt-4 w-64 h-1 bg-warm-white/20 rounded-full overflow-hidden">
+          <div id="loading-progress" class="h-full bg-electric-cyan transition-all duration-300 ease-out" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cursor -->
+    <div id="cursor" class="fixed w-6 h-6 bg-electric-cyan rounded-full pointer-events-none z-40 mix-blend-difference opacity-0 transition-opacity duration-300">
+      <div class="absolute inset-0 bg-electric-cyan rounded-full animate-ping"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-30 p-6">
+      <div class="flex justify-between items-center max-w-7xl mx-auto">
+        <div class="text-2xl font-mono text-electric-cyan font-bold">
+          <span class="animate-hologram">DA</span>
+        </div>
+        <div class="hidden md:flex space-x-8 font-mono text-sm">
+          <a href="#laboratory" class="hover:text-electric-cyan transition-colors duration-300">Laboratory</a>
+          <a href="#experiments" class="hover:text-electric-cyan transition-colors duration-300">Experiments</a>
+          <a href="#formulas" class="hover:text-electric-cyan transition-colors duration-300">Formulas</a>
+          <a href="#synthesis" class="hover:text-electric-cyan transition-colors duration-300">Synthesis</a>
+          <a href="#contact" class="hover:text-electric-cyan transition-colors duration-300">Contact</a>
+        </div>
+        <div class="md:hidden">
+          <button id="mobile-menu-toggle" class="text-electric-cyan">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="relative">
+      <slot />
+    </main>
+
+    <!-- Audio Controls -->
+    <div class="fixed bottom-6 left-6 z-30">
+      <button id="audio-toggle" class="w-12 h-12 bg-space-blue/80 backdrop-blur-sm border border-electric-cyan/30 rounded-full flex items-center justify-center hover:bg-electric-cyan/20 transition-colors duration-300">
+        <svg class="w-6 h-6 text-electric-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 14.142M9 9a3 3 0 000 6h3v-2H9a1 1 0 110-2h3V9H9z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Performance Monitor (Development) -->
+    <div id="performance-monitor" class="fixed top-6 right-6 z-30 font-mono text-xs text-electric-cyan/70 bg-space-blue/80 backdrop-blur-sm p-2 rounded hidden">
+      <div>FPS: <span id="fps">0</span></div>
+      <div>Memory: <span id="memory">0</span>MB</div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+      // Basic cursor functionality
+      const cursor = document.getElementById('cursor');
+      let mouseX = 0, mouseY = 0;
+      let cursorX = 0, cursorY = 0;
+
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        cursor.style.opacity = '1';
+      });
+
+      document.addEventListener('mouseleave', () => {
+        cursor.style.opacity = '0';
+      });
+
+      function updateCursor() {
+        cursorX += (mouseX - cursorX) * 0.1;
+        cursorY += (mouseY - cursorY) * 0.1;
+        cursor.style.transform = `translate(${cursorX - 12}px, ${cursorY - 12}px)`;
+        requestAnimationFrame(updateCursor);
+      }
+      updateCursor();
+
+      // Loading screen
+      let loadingProgress = 0;
+      const loadingBar = document.getElementById('loading-progress');
+      
+      function updateLoading() {
+        loadingProgress += Math.random() * 3;
+        if (loadingProgress > 100) loadingProgress = 100;
+        
+        loadingBar.style.width = loadingProgress + '%';
+        
+        if (loadingProgress >= 100) {
+          setTimeout(() => {
+            document.getElementById('loading-screen').style.opacity = '0';
+            setTimeout(() => {
+              document.getElementById('loading-screen').style.display = 'none';
+            }, 500);
+          }, 500);
+        } else {
+          setTimeout(updateLoading, 100);
+        }
+      }
+      
+      // Start loading animation
+      setTimeout(updateLoading, 1000);
+
+      // Mobile menu toggle
+      document.getElementById('mobile-menu-toggle')?.addEventListener('click', () => {
+        // Mobile menu implementation
+        console.log('Mobile menu toggled');
+      });
+
+      // Audio toggle
+      document.getElementById('audio-toggle')?.addEventListener('click', () => {
+        // Audio implementation
+        console.log('Audio toggled');
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #0a0a0f;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #00ffff;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00cccc;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Selection styling */
+  ::selection {
+    background: #00ffff;
+    color: #0a0a0f;
+  }
+
+  /* Focus styles */
+  *:focus {
+    outline: 2px solid #00ffff;
+    outline-offset: 2px;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
